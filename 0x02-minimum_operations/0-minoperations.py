@@ -1,41 +1,60 @@
 #!/usr/bin/python3
-
-
-''' A module that returns the minimum Operations it takes to
-    get to n characters.
-
-    Available operations:
-        copy
-        paste
-'''
+'''Minimum Operations python3 challenge'''
 
 
 def minOperations(n):
+    '''calculates the fewest number of
+    operations needed to result in exactly n H
+    characters in this file.
+    Returns:
+        Integer : if n is impossible to achieve, return 0
     '''
-    returns the minimum operations to get n H's
-    '''
-    min_operations = 0
+    pasted_chars = 1  # how many chars in the file
+    clipboard = 0  # how many H's copied
+    counter = 0  # operations counter
 
-    if n <= 1:
-        return min_operations
+    while pasted_chars < n:
+        # if did not copy anything yet
+        if clipboard == 0:
+            # copyall
+            clipboard = pasted_chars
+            # increment operations counter
+            counter += 1
 
-    for i in range(2, n + 1):
-        while n % i == 0:
-            min_operations += i
-            n /= i
+        # if haven't pasted anything yet
+        if pasted_chars == 1:
+            # paste
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 1
+            # continue to next loop
+            continue
 
-    return min_operations
+        remaining = n - pasted_chars  # remaining chars to Paste
+        # check if impossible by checking if clipboard
+        # has more than needed to reach the number desired
+        # which also means num of chars in file is equal
+        # or more than in the clipboard.
+        # in both situations it's impossible to achieve n of chars
+        if remaining < clipboard:
+            return 0
 
+        # if can't be devided
+        if remaining % pasted_chars != 0:
+            # paste current clipboard
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 1
+        else:
+            # copyall
+            clipboard = pasted_chars
+            # paste
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 2
 
-if __name__ == '__main__':
-    from random import randint
-    from time import time
-
-    start_time = time()
-
-    for i in range(10):
-        n = randint(2, 100)
-        print("Min # of operations to reach {} char: {}".
-              format(n, minOperations(n)))
-
-    print(f'==> Program completed in {time() - start_time:.3f}s')
+    # if got the desired result
+    if pasted_chars == n:
+        return counter
+    else:
+        return 0
